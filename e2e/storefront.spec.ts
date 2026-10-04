@@ -52,6 +52,17 @@ test.describe("storefront on a phone", () => {
     await expect(page.getByText("We couldn't find an order with that number and e-mail.")).toBeVisible();
   });
 
+  test("links styled as buttons keep readable text, not the inherited link colour", async ({ page }) => {
+    await page.goto("/contact");
+    const colors = await page.getByRole("link", { name: /^E-mail / }).evaluate((element) => {
+      const style = getComputedStyle(element);
+      return { text: style.color, background: style.backgroundColor };
+    });
+
+    expect(colors.text).toBe("rgb(247, 245, 239)");
+    expect(colors.background).toBe("rgb(20, 33, 61)");
+  });
+
   test("security headers are sent", async ({ request }) => {
     const response = await request.get("/");
     expect(response.headers()["content-security-policy"]).toContain("frame-ancestors 'none'");

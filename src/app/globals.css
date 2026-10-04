@@ -10,13 +10,16 @@
   --font-mono: var(--font-geist-mono), ui-monospace, monospace;
 }
 
-* { box-sizing: border-box; }
-html { scroll-behavior: smooth; }
-body { margin: 0; background: var(--color-paper); color: var(--color-ink); }
-a { color: inherit; }
-:focus-visible { outline: 3px solid var(--color-coral); outline-offset: 2px; }
-button, [role="button"] { transition: background-color 160ms ease, color 160ms ease, transform 160ms ease; }
-button:not(:disabled):active { transform: translate(2px, 2px); }
+/* Base styles live in the base layer so Tailwind utilities (e.g. text-paper on a link styled as a button) win. */
+@layer base {
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { margin: 0; background: var(--color-paper); color: var(--color-ink); }
+  a { color: inherit; }
+  :focus-visible { outline: 3px solid var(--color-coral); outline-offset: 2px; }
+  button, [role="button"] { transition: background-color 160ms ease, color 160ms ease, transform 160ms ease; }
+  button:not(:disabled):active { transform: translate(2px, 2px); }
+}
 
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
