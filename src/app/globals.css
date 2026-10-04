@@ -1,10 +1,24 @@
 @import "tailwindcss";
 
-:root { --background: #f7f5ef; --foreground: #14213d; }
-@theme inline { --color-background: var(--background); --color-foreground: var(--foreground); --font-sans: Arial, Helvetica, sans-serif; }
+@theme {
+  --color-paper: #f7f5ef;
+  --color-ink: #14213d;
+  --color-coral: #ff6b5e;
+  --color-mint: #9ed6d1;
+  --color-sand: #f1e7d0;
+  --font-sans: var(--font-geist-sans), Arial, Helvetica, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+}
+
 * { box-sizing: border-box; }
 html { scroll-behavior: smooth; }
-body { margin: 0; background: var(--background); color: var(--foreground); }
-a { text-decoration: none; color: inherit; }
-button { transition: background-color 160ms ease, color 160ms ease, transform 160ms ease; }
-button:active { transform: translate(2px, 2px); }
+body { margin: 0; background: var(--color-paper); color: var(--color-ink); }
+a { color: inherit; }
+:focus-visible { outline: 3px solid var(--color-coral); outline-offset: 2px; }
+button, [role="button"] { transition: background-color 160ms ease, color 160ms ease, transform 160ms ease; }
+button:not(:disabled):active { transform: translate(2px, 2px); }
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { transition: none !important; animation: none !important; }
+}
