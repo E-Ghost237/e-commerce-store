@@ -230,7 +230,8 @@ export async function beginMfa(_previous: AdminActionState): Promise<AdminAction
 }
 
 export async function confirmMfa(_previous: AdminActionState, formData: FormData): Promise<AdminActionState> {
-  return attempt(() => adminApi("/mfa/confirm", { method: "POST", body: { code: text(formData, "code") } }), "Two-factor authentication is on. Store these recovery codes somewhere safe; they are shown once.", ["/admin/security"]);
+  // No revalidation here: re-rendering would swap the panel and hide the one-time recovery codes.
+  return attempt(() => adminApi("/mfa/confirm", { method: "POST", body: { code: text(formData, "code") } }), "Two-factor authentication is on. Store these recovery codes somewhere safe; they are shown once.");
 }
 
 export async function disableMfa(_previous: AdminActionState, formData: FormData): Promise<AdminActionState> {

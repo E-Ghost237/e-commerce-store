@@ -1,0 +1,59 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run typecheck
+      - run: npm run build
+      - run: npm audit --omit=dev --audit-level=high
+
+  e2e:
+    needs: checks
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          # The API repository; set COMMERCE_CORE_REPOSITORY (and a token if it is private).
+          repository: ${{ vars.COMMERCE_CORE_REPOSITORY }}
+          token: ${{ secrets.COMMERCE_CORE_TOKEN || github.token }}
+          path: commerce-core
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          extensions: pdo_sqlite, intl, bcmath
+      - run: composer install --no-interaction --prefer-dist --no-progress
+        working-directory: commerce-core
+      - run: cp .env.example .env && php artisan key:generate
+        working-directory: commerce-core
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - run: npm run test:e2e
+        env:
+          COMMERCE_CORE_PATH: ${{ github.workspace }}/commerce-core
+          CI: '1'
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: playwright-traces
+          path: test-results/

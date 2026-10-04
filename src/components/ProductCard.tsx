@@ -11,7 +11,7 @@ export function ProductCard({ product, priority = false }: { product: Product; p
 
   return (
     <article className={`${ui.card} flex flex-col`}>
-      <Link href={`/products/${product.slug}`} className="relative block aspect-[4/3] border-b-2 border-ink bg-mint">
+      <Link href={`/products/${product.slug}`} className="relative block aspect-[4/3] border-b-2 border-ink bg-mint" aria-hidden tabIndex={-1}>
         {product.primary_image && (
           <Image src={product.primary_image.url} alt={product.primary_image.alt_text ?? product.name} fill sizes="(min-width: 768px) 33vw, 100vw" className="object-cover" priority={priority} />
         )}

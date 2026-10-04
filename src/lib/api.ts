@@ -88,6 +88,11 @@ export async function api<T>(path: string, options: ApiOptions = {}): Promise<T>
     );
   }
 
+  if (payload === null) {
+    // A 2xx that is not JSON (e.g. a proxy error page) must not be treated as data.
+    throw new ApiError(502, "invalid_api_response", "The service returned an unexpected response.", {}, response.headers.get("x-correlation-id"));
+  }
+
   return payload as T;
 }
 
