@@ -36,7 +36,8 @@ export default defineConfig({
       timeout: 60_000,
     },
     {
-      command: `npx next build && npx next start --port ${WEB_PORT}`,
+      // Drop cached API responses from earlier runs: they belong to a different database and API version.
+      command: `rm -rf .next/cache/fetch-cache && npx next build && npx next start --port ${WEB_PORT}`,
       env: { COMMERCE_API_URL: apiUrl, STOREFRONT_API_KEY: storefrontKey, NEXT_PUBLIC_SITE_URL: webUrl, NEXT_TELEMETRY_DISABLED: "1" },
       url: `${webUrl}/robots.txt`,
       reuseExistingServer: false,

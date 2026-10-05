@@ -39,6 +39,7 @@ export type AdminProduct = {
   seo_title: string | null;
   seo_description: string | null;
   images: { id: number; url: string; alt_text: string | null }[];
+  videos?: { id: number; url: string; poster_url: string | null; duration_seconds: number | null }[];
   variants: { id: number; sku: string; name: string; status: string; unit_cost_cents: number | null; stock_quantity: number | null; price_cents: number | null }[];
 };
 

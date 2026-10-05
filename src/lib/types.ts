@@ -21,6 +21,16 @@ export type ProductVariant = {
   in_stock: boolean;
 };
 
+export type ProductVideo = {
+  id: number;
+  url: string;
+  poster_url: string | null;
+  mime_type: string | null;
+  width: number | null;
+  height: number | null;
+  duration_seconds: number | null;
+};
+
 export type Product = {
   id: number;
   name: string;
@@ -30,6 +40,7 @@ export type Product = {
   seo_description: string | null;
   categories: { id: number; name: string; slug: string }[];
   images: ProductImage[];
+  videos: ProductVideo[];
   primary_image: { url: string; alt_text: string | null } | null;
   variants: ProductVariant[];
 };

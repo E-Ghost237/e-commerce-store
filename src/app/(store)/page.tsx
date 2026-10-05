@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { AddToCartForm } from "@/components/AddToCartForm";
 import { ProductCard } from "@/components/ProductCard";
+import { ProductVideo } from "@/components/ProductVideo";
 import { ui } from "@/components/ui";
 import { site } from "@/content/site";
 import { listBundles, listProducts } from "@/lib/catalog";
@@ -8,6 +9,8 @@ import { formatMoney } from "@/lib/money";
 
 export default async function Home() {
   const [products, bundles] = await Promise.all([listProducts(), listBundles()]);
+  const demoProduct = products.find((product) => product.videos.length > 0);
+  const demoVideo = demoProduct ? { product: demoProduct, video: demoProduct.videos[0] } : null;
 
   return (
     <>
@@ -27,11 +30,17 @@ export default async function Home() {
             <video className="aspect-video w-full border-b-2 border-ink object-cover" controls muted playsInline preload="none" poster={site.demoVideo.poster}>
               <source src={site.demoVideo.src} type="video/mp4" />
             </video>
+          ) : demoVideo ? (
+            <div className="border-b-2 border-ink">
+              <ProductVideo video={demoVideo.video} label={`${demoVideo.product.name} demonstration`} className="max-h-[480px]" />
+            </div>
           ) : (
             // eslint-disable-next-line @next/next/no-img-element -- static poster until a demo video URL is configured
             <img className="aspect-video w-full border-b-2 border-ink object-cover" src={site.demoVideo.poster} alt="Pet hair roller demonstration on a sofa" />
           )}
-          <figcaption className="p-5 text-lg font-black tracking-[-.04em]">{site.demoVideo.caption}</figcaption>
+          <figcaption className="p-5 text-lg font-black tracking-[-.04em]">
+            {site.demoVideo.src || !demoVideo ? site.demoVideo.caption : <Link href={`/products/${demoVideo.product.slug}`} className="underline">{demoVideo.product.name}: see it in action →</Link>}
+          </figcaption>
         </figure>
       </section>
 

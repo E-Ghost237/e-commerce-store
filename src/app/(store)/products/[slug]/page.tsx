@@ -4,6 +4,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { AddToCartForm } from "@/components/AddToCartForm";
 import { JsonLd } from "@/components/JsonLd";
+import { ProductVideo } from "@/components/ProductVideo";
 import { ui } from "@/components/ui";
 import { site } from "@/content/site";
 import { fromPrice, getProduct } from "@/lib/catalog";
@@ -46,6 +47,18 @@ export default async function ProductPage({ params }: PageProps<"/products/[slug
           name: product.name,
           description: product.description,
           image: images.map((image) => image.url),
+          ...(product.videos[0]
+            ? {
+                subjectOf: {
+                  "@type": "VideoObject",
+                  name: `${product.name} demonstration`,
+                  description: product.seo_description ?? product.name,
+                  contentUrl: product.videos[0].url,
+                  thumbnailUrl: product.videos[0].poster_url ?? images[0]?.url,
+                  ...(product.videos[0].duration_seconds ? { duration: `PT${Math.round(product.videos[0].duration_seconds)}S` } : {}),
+                },
+              }
+            : {}),
           sku: product.variants[0]?.sku,
           brand: { "@type": "Brand", name: site.brand },
           offers: product.variants
@@ -62,11 +75,35 @@ export default async function ProductPage({ params }: PageProps<"/products/[slug
       />
 
       <div className="grid gap-3">
-        {images.map((image, index) => (
-          <div key={image.id} className={`relative border-2 border-ink bg-mint ${index === 0 ? "aspect-square" : "aspect-[4/3]"}`}>
-            <Image src={image.url} alt={image.alt_text ?? product.name} fill sizes="(min-width: 1024px) 50vw, 100vw" className="object-cover" priority={index === 0} />
+        {images[0] && (
+          <div className="relative aspect-square border-2 border-ink bg-mint">
+            <Image src={images[0].url} alt={images[0].alt_text ?? product.name} fill sizes="(min-width: 1024px) 50vw, 100vw" className="object-cover" priority />
           </div>
-        ))}
+        )}
+        {product.videos[0] && (
+          <figure className="border-2 border-ink">
+            <ProductVideo video={product.videos[0]} label={`${product.name} demonstration`} />
+          </figure>
+        )}
+        {images.length > 1 && (
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+            {images.slice(1).map((image) => (
+              <div key={image.id} className="relative aspect-square border-2 border-ink bg-mint">
+                <Image src={image.url} alt={image.alt_text ?? product.name} fill sizes="(min-width: 1024px) 17vw, 50vw" className="object-cover" />
+              </div>
+            ))}
+          </div>
+        )}
+        {product.videos.length > 1 && (
+          <details className="border-2 border-ink p-3">
+            <summary className="cursor-pointer font-bold">More videos ({product.videos.length - 1})</summary>
+            <div className="mt-3 grid gap-3 sm:grid-cols-2">
+              {product.videos.slice(1).map((video) => (
+                <ProductVideo key={video.id} video={video} label={`${product.name} video`} />
+              ))}
+            </div>
+          </details>
+        )}
       </div>
 
       <div className="flex flex-col gap-6">

@@ -107,6 +107,8 @@ export async function saveProduct(productId: number | null, _previous: AdminActi
   }).filter((variant) => variant.sku !== "" || variant.name !== "");
 
   const imageUrl = text(formData, "image_url");
+  const imageChanged = imageUrl !== "" && imageUrl !== text(formData, "image_url_original");
+  const otherImages = formData.getAll("other_image_url").map(String).filter((url) => url !== imageUrl);
   const body = {
     name: text(formData, "name"),
     slug: text(formData, "slug"),
@@ -114,7 +116,10 @@ export async function saveProduct(productId: number | null, _previous: AdminActi
     status: text(formData, "status"),
     seo_title: optionalText(formData, "seo_title"),
     seo_description: optionalText(formData, "seo_description"),
-    ...(imageUrl ? { images: [{ url: imageUrl, alt_text: text(formData, "image_alt") || text(formData, "name"), position: 0, is_primary: true }] } : {}),
+    // Only touch the gallery when the main picture changed; the API keeps the other pictures by URL.
+    ...(imageChanged
+      ? { images: [{ url: imageUrl, alt_text: text(formData, "image_alt") || text(formData, "name"), position: 0, is_primary: true }, ...otherImages.map((url, index) => ({ url, position: index + 1, is_primary: false }))] }
+      : {}),
     variants,
   };
 

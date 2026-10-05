@@ -23,7 +23,9 @@ export function ProductForm({ product }: { product: AdminProduct | null }) {
         <Field label="SEO title" name="seo_title" defaultValue={product?.seo_title ?? ""} />
         <div className="sm:col-span-2"><TextArea label="Description" name="description" defaultValue={product?.description ?? ""} /></div>
         <div className="sm:col-span-2"><TextArea label="SEO description" name="seo_description" defaultValue={product?.seo_description ?? ""} /></div>
-        <Field label="Main image URL" name="image_url" type="url" defaultValue={image?.url ?? ""} />
+        <input type="hidden" name="image_url_original" value={image?.url ?? ""} />
+        {(product?.images ?? []).slice(1).map((other) => <input key={other.id} type="hidden" name="other_image_url" value={other.url} />)}
+        <Field label="Main image URL" name="image_url" type="url" defaultValue={image?.url ?? ""} hint={product && product.images.length > 1 ? `Gallery: ${product.images.length} pictures. Changing this only replaces the main one.` : undefined} />
         <Field label="Image alt text" name="image_alt" defaultValue={image?.alt_text ?? ""} />
       </div>
 
