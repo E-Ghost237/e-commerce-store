@@ -34,9 +34,13 @@ const securityHeaders = [
   ...(isProduction ? [{ key: "Strict-Transport-Security", value: "max-age=63072000; includeSubDomains; preload" }] : []),
 ];
 
+/** Extra dev origins (tunnels, preview domains) so `next dev` answers requests proxied through them. */
+const devOrigins = (process.env.NEXT_DEV_ORIGINS ?? "").split(",").map((origin) => origin.trim()).filter(Boolean);
+
 const nextConfig: NextConfig = {
   poweredByHeader: false,
   output: "standalone",
+  ...(isProduction ? {} : { allowedDevOrigins: ["*.e2b.app", "*.e2b.dev", ...devOrigins] }),
   images: {
     remotePatterns: [
       ...imageHosts.map((hostname) => ({ protocol: "https" as const, hostname })),

@@ -22,7 +22,7 @@ export function BundleForm({ bundle, products }: { bundle: Bundle | null; produc
         </Select>
         <div className="sm:col-span-2"><TextArea label="Description" name="description" defaultValue={bundle?.description ?? ""} /></div>
       </div>
-      <fieldset className="border-2 border-ink p-4">
+      <fieldset className="rounded-3xl border border-ink/10 bg-white p-5 shadow-soft">
         <legend className="px-2 font-black">Contents</legend>
         <p className="mb-3 text-sm">Past orders keep the contents they were sold with.</p>
         <div className="grid gap-2">

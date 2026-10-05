@@ -15,10 +15,10 @@ export default async function ProductsPage({ searchParams }: PageProps<"/admin/p
     <>
       <PageTitle title="Products"><Link href="/admin/products/new" className={ui.buttonPrimary}>New product</Link></PageTitle>
       <form className="mb-4 flex gap-2"><label className="sr-only" htmlFor="q">Search</label><input id="q" name="q" className={ui.input} defaultValue={search} placeholder="Search by name" /><button className={ui.buttonGhost}>Search</button></form>
-      <div className="overflow-x-auto border-2 border-ink">
+      <div className="overflow-x-auto rounded-3xl border border-ink/10 bg-white shadow-soft">
         <table className="w-full min-w-[640px] text-sm">
           <thead className="bg-ink text-left text-paper"><tr>{["Product", "Status", "Variants", "Price", "Cost"].map((heading) => <th key={heading} scope="col" className="px-3 py-2">{heading}</th>)}</tr></thead>
-          <tbody className="divide-y divide-stone-300">
+          <tbody className="divide-y divide-ink/8">
             {products.data.map((product) => (
               <tr key={product.id}>
                 <td className="px-3 py-2 font-bold"><Link className="underline" href={`/admin/products/${product.id}`}>{product.name}</Link></td>

@@ -52,7 +52,7 @@ export default async function OrderPage({ params }: PageProps<"/admin/orders/[id
             <h2 className="mb-3 font-black">Items</h2>
             <table className="w-full text-sm">
               <thead className="text-left"><tr><th className="py-1">Item</th><th>Qty</th><th className="text-right">Cost/unit</th><th className="text-right">Total</th></tr></thead>
-              <tbody className="divide-y divide-stone-300">
+              <tbody className="divide-y divide-ink/8">
                 {order.items.map((item) => (
                   <tr key={item.sku}>
                     <td className="py-2">

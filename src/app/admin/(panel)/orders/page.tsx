@@ -51,14 +51,14 @@ export default async function OrdersPage({ searchParams }: PageProps<"/admin/ord
         <button className={ui.buttonPrimary}>Search</button>
       </form>
 
-      <div className="overflow-x-auto border-2 border-ink">
+      <div className="overflow-x-auto rounded-3xl border border-ink/10 bg-white shadow-soft">
         <table className="w-full min-w-[760px] text-sm">
           <thead className="bg-ink text-left text-paper">
             <tr>{["Order", "Placed", "Customer", "Total", "Payment", "Fulfilment", "Tracking"].map((heading) => <th key={heading} scope="col" className="px-3 py-2">{heading}</th>)}</tr>
           </thead>
-          <tbody className="divide-y divide-stone-300">
+          <tbody className="divide-y divide-ink/8">
             {orders.data.map((order) => (
-              <tr key={order.id} className="hover:bg-sand">
+              <tr key={order.id} className="hover:bg-linen">
                 <td className="px-3 py-2 font-bold"><Link className="underline" href={`/admin/orders/${order.id}`}>{order.number}</Link></td>
                 <td className="px-3 py-2">{new Date(order.created_at).toLocaleString("en-US", { dateStyle: "medium", timeStyle: "short", timeZone: "UTC" })} UTC</td>
                 <td className="px-3 py-2">{order.email}</td>

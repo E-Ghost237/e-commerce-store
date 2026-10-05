@@ -12,10 +12,10 @@ export default async function DiscountsPage() {
   return (
     <>
       <PageTitle title="Discounts"><Link href="/admin/discounts/new" className={ui.buttonPrimary}>New discount</Link></PageTitle>
-      <div className="overflow-x-auto border-2 border-ink">
+      <div className="overflow-x-auto rounded-3xl border border-ink/10 bg-white shadow-soft">
         <table className="w-full min-w-[640px] text-sm">
           <thead className="bg-ink text-left text-paper"><tr>{["Code", "Value", "Minimum", "Used", "Window", "Status"].map((heading) => <th key={heading} scope="col" className="px-3 py-2">{heading}</th>)}</tr></thead>
-          <tbody className="divide-y divide-stone-300">
+          <tbody className="divide-y divide-ink/8">
             {discounts.data.map((discount) => (
               <tr key={discount.id}>
                 <td className="px-3 py-2 font-mono font-bold"><Link className="underline" href={`/admin/discounts/${discount.id}`}>{discount.code}</Link></td>

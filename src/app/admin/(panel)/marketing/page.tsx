@@ -24,10 +24,10 @@ export default async function MarketingPage() {
           <Field label="Amount (USD)" name="amount" inputMode="decimal" required />
         </ActionForm>
       </section>
-      <div className="overflow-x-auto border-2 border-ink">
+      <div className="overflow-x-auto rounded-3xl border border-ink/10 bg-white shadow-soft">
         <table className="w-full min-w-[560px] text-sm">
           <thead className="bg-ink text-left text-paper"><tr>{["Date", "Source", "Campaign", "Creative", "Amount"].map((heading) => <th key={heading} scope="col" className="px-3 py-2">{heading}</th>)}</tr></thead>
-          <tbody className="divide-y divide-stone-300">
+          <tbody className="divide-y divide-ink/8">
             {spends.data.map((spend) => (
               <tr key={spend.id}>
                 <td className="px-3 py-2">{spend.spent_on.slice(0, 10)}</td>
