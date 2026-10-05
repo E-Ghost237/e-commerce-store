@@ -3,16 +3,31 @@ import { headers } from "next/headers";
 import { serverConfig } from "./config";
 import type { ApiErrorBody } from "./types";
 
+export const GENERIC_ERROR_MESSAGE = "Something went wrong on our side. Please try again in a moment.";
+
+/**
+ * API failure that is safe to show: for server-side failures `message` is always generic (plus a support reference),
+ * never the API's own text. The original detail is logged on this server only.
+ */
 export class ApiError extends Error {
+  public readonly fieldErrors: Record<string, string[]>;
+
   constructor(
     public readonly status: number,
     public readonly code: string,
     message: string,
-    public readonly fieldErrors: Record<string, string[]> = {},
+    fieldErrors: Record<string, string[]> = {},
     public readonly correlationId: string | null = null,
-    public readonly body: unknown = null,
   ) {
-    super(message);
+    const isServerFailure = status >= 500;
+    // The API only uses these codes for deliberate aborts whose message is written for customers.
+    const hasClientMessage = !isServerFailure || ["service_unavailable", "upstream_provider_error"].includes(code);
+    super(hasClientMessage ? message : `${GENERIC_ERROR_MESSAGE}${correlationId ? ` (reference ${correlationId.slice(0, 8)})` : ""}`);
+    this.fieldErrors = isServerFailure ? {} : fieldErrors;
+
+    if (isServerFailure && !hasClientMessage) {
+      console.error(`[api] ${status} ${code}${correlationId ? ` correlation_id=${correlationId}` : ""}: ${message}`);
+    }
   }
 
   /** First message per field, for forms. */
@@ -20,6 +35,9 @@ export class ApiError extends Error {
     return Object.fromEntries(Object.entries(this.fieldErrors).map(([field, messages]) => [field, messages[0] ?? ""]));
   }
 }
+
+/** Longer than the API's own slowest path (live supplier shipping quotes). */
+const REQUEST_TIMEOUT_MS = 60_000;
 
 type ApiOptions = {
   method?: "GET" | "POST" | "PATCH" | "PUT" | "DELETE";
@@ -62,14 +80,21 @@ export async function api<T>(path: string, options: ApiOptions = {}): Promise<T>
     requestHeaders["Idempotency-Key"] = options.idempotencyKey;
   }
 
-  const response = await fetch(`${serverConfig.apiUrl}/api/v1${path}`, {
-    method,
-    headers: requestHeaders,
-    body: options.body === undefined ? undefined : JSON.stringify(options.body),
-    ...(options.revalidate !== undefined && method === "GET" && !options.token
-      ? { next: { revalidate: options.revalidate } }
-      : { cache: "no-store" as const }),
-  });
+  let response: Response;
+  try {
+    response = await fetch(`${serverConfig.apiUrl}/api/v1${path}`, {
+      method,
+      headers: requestHeaders,
+      body: options.body === undefined ? undefined : JSON.stringify(options.body),
+      signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
+      ...(options.revalidate !== undefined && method === "GET" && !options.token
+        ? { next: { revalidate: options.revalidate } }
+        : { cache: "no-store" as const }),
+    });
+  } catch (error) {
+    // Unreachable API, DNS failure or timeout: same safe error as any other server-side failure.
+    throw new ApiError(503, "api_unreachable", `${method} ${path}: ${error instanceof Error ? error.message : String(error)}`);
+  }
 
   if (response.status === 204) {
     return undefined as T;
@@ -84,7 +109,6 @@ export async function api<T>(path: string, options: ApiOptions = {}): Promise<T>
       payload?.error?.message ?? payload?.message ?? "Something went wrong. Please try again.",
       payload?.errors ?? {},
       payload?.error?.correlation_id ?? response.headers.get("x-correlation-id"),
-      payload,
     );
   }
 

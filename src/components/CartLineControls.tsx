@@ -14,8 +14,12 @@ export function CartLineControls({ line }: { line: CartLine }) {
     formData.set("line", String(line.id));
     formData.set("quantity", String(quantity));
     startTransition(async () => {
-      const result = await updateCartLine(formData);
-      setMessage(result.ok ? null : result.message);
+      try {
+        const result = await updateCartLine(formData);
+        setMessage(result.ok ? null : result.message);
+      } catch {
+        setMessage("Something went wrong on our side. Please try again in a moment.");
+      }
     });
   }
 

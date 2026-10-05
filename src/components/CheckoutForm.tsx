@@ -9,6 +9,8 @@ import { ui } from "./ui";
 
 const US_STATES = "AL AK AZ AR CA CO CT DE DC FL GA HI ID IL IN IA KS KY LA ME MD MA MI MN MS MO MT NE NV NH NJ NM NY NC ND OH OK OR PA RI SC SD TN TX UT VT VA WA WV WI WY".split(" ");
 
+const UNEXPECTED_ERROR = "Something went wrong on our side. Please try again in a moment.";
+
 const emptyAddress: ShippingAddress = { name: "", address_line1: "", address_line2: "", city: "", province: "", zip: "", phone: "", country_code: "US", country: "United States" };
 
 export function CheckoutForm({ cart }: { cart: Cart }) {
@@ -37,11 +39,15 @@ export function CheckoutForm({ cart }: { cart: Cart }) {
   function fetchQuotes() {
     setMessage(null);
     startQuoting(async () => {
-      const result = await quoteShipping(address);
-      setErrors(result.errors);
-      setMessage(result.message);
-      setQuotes(result.quotes.length ? result.quotes : null);
-      setMethod(result.quotes[0]?.method ?? "");
+      try {
+        const result = await quoteShipping(address);
+        setErrors(result.errors);
+        setMessage(result.message);
+        setQuotes(result.quotes.length ? result.quotes : null);
+        setMethod(result.quotes[0]?.method ?? "");
+      } catch {
+        setMessage(UNEXPECTED_ERROR);
+      }
     });
   }
 
@@ -53,12 +59,17 @@ export function CheckoutForm({ cart }: { cart: Cart }) {
     }
     setMessage(null);
     startPaying(async () => {
-      const result = await startCheckout({ idempotencyKey, email, address, shippingMethod: method, discountCode, marketingConsent: consent });
-      setErrors(result.errors);
-      setMessage(result.message);
-      if (result.pricesChanged) {
-        router.push("/cart");
-        router.refresh();
+      try {
+        const result = await startCheckout({ idempotencyKey, email, address, shippingMethod: method, discountCode, marketingConsent: consent });
+        setErrors(result.errors);
+        setMessage(result.message);
+        if (result.pricesChanged) {
+          router.push("/cart");
+          router.refresh();
+        }
+      } catch {
+        // Never surface raw errors; the cart and the idempotent checkout attempt are safe to retry.
+        setMessage(UNEXPECTED_ERROR);
       }
     });
   }

@@ -34,7 +34,8 @@ async function attempt(run: () => Promise<unknown>, success: string, paths: stri
   } catch (error) {
     if (error instanceof ApiError) {
       const errors = Object.values(error.fieldErrors).flat();
-      return { ok: false, message: errors.length ? null : `${error.message}${error.correlationId ? ` (ref ${error.correlationId})` : ""}`, errors };
+      // ApiError messages are client-safe: server failures are already generic with a reference.
+      return { ok: false, message: errors.length ? null : error.message, errors };
     }
     throw error;
   }
