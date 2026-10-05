@@ -3,7 +3,7 @@ import type { NextConfig } from "next";
 const isProduction = process.env.NODE_ENV === "production";
 
 /** Hosts product images may come from (supplier CDNs, your own bucket); extend via NEXT_PUBLIC_IMAGE_HOSTS. */
-const imageHosts = ["images.unsplash.com", "cf.cjdropshipping.com", "cc-west-usa.oss-us-west-1.aliyuncs.com", ...(process.env.NEXT_PUBLIC_IMAGE_HOSTS ?? "").split(",").map((host) => host.trim()).filter(Boolean)];
+const imageHosts = ["images.unsplash.com", "cf.cjdropshipping.com", "oss-cf.cjdropshipping.com", "cc-west-usa.oss-us-west-1.aliyuncs.com", ...(process.env.NEXT_PUBLIC_IMAGE_HOSTS ?? "").split(",").map((host) => host.trim()).filter(Boolean)];
 
 const contentSecurityPolicy = [
   "default-src 'self'",
