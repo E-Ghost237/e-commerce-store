@@ -29,7 +29,7 @@ export function ProductForm({ product }: { product: AdminProduct | null }) {
         <Field label="Image alt text" name="image_alt" defaultValue={image?.alt_text ?? ""} />
       </div>
 
-      <fieldset className="border-2 border-ink p-4">
+      <fieldset className="rounded-3xl border border-ink/10 bg-white p-5 shadow-soft">
         <legend className="px-2 font-black">Variants</legend>
         <p className="mb-3 text-sm">Changing a price starts a new price from now; past orders keep the price they were sold at. Leave the last row empty to add nothing.</p>
         <div className="grid gap-3">

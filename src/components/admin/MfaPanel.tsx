@@ -21,7 +21,7 @@ export function MfaPanel({ enabled }: { enabled: boolean }) {
         submitLabel="1. Generate a key"
         tone="ghost"
         renderResult={(data) => (
-          <div className="grid gap-2 border-2 border-ink bg-sand p-4 text-sm">
+          <div className="rounded-2xl border border-ink/10 bg-linen p-4 text-sm">
             <p>Add this key to your authenticator app (manual entry), or open the link on your phone:</p>
             <code className="break-all font-mono text-base font-bold">{String(data.secret)}</code>
             <a className="break-all underline" href={String(data.otpauth_url)}>{String(data.otpauth_url)}</a>
@@ -33,7 +33,7 @@ export function MfaPanel({ enabled }: { enabled: boolean }) {
         submitLabel="2. Confirm"
         renderResult={(data) => (
           <div className="grid gap-3">
-            <ol className="grid list-inside list-decimal gap-1 border-2 border-ink bg-mint p-4 font-mono">
+            <ol className="grid list-inside list-decimal gap-1 rounded-2xl border border-ink/10 bg-mint p-4 font-mono">
               {(data.recovery_codes as string[]).map((code) => <li key={code}>{code}</li>)}
             </ol>
             <Link href="/admin/security" className="w-fit text-sm font-bold underline">I&apos;ve saved my recovery codes</Link>

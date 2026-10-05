@@ -49,10 +49,10 @@ export default async function SuppliersPage() {
       </section>
 
       <h2 className="mb-3 text-xl font-black">Variant mappings</h2>
-      <div className="overflow-x-auto border-2 border-ink">
+      <div className="overflow-x-auto rounded-3xl border border-ink/10 bg-white shadow-soft">
         <table className="w-full min-w-[900px] text-sm">
           <thead className="bg-ink text-left text-paper"><tr>{["Variant", "Supplier", "Supplier SKU / warehouse / cost", "Stock", "Last sync", ""].map((heading) => <th key={heading} scope="col" className="px-3 py-2">{heading}</th>)}</tr></thead>
-          <tbody className="divide-y divide-stone-300 align-top">
+          <tbody className="divide-y divide-ink/8 align-top">
             {mappings.data.map((mapping) => (
               <tr key={mapping.id}>
                 <td className="px-3 py-2"><strong>{mapping.product_variant.sku}</strong><br />{mapping.product_variant.name}</td>

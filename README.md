@@ -4,7 +4,8 @@ Next.js 16 storefront and back office for the Commerce Core API (the Laravel app
 
 ## What's here
 
-- **Storefront** (`src/app/(store)`): home (hero, demo video, benefits, bundles, products, testimonials, FAQ), product pages with availability and Product/Offer JSON-LD, guest cart, checkout (US address, live shipping quotes, discount code, marketing consent, Stripe hosted checkout), success and cancel pages, order tracking, shipping/returns/privacy/terms/contact pages, `sitemap.xml`, `robots.txt`.
+- **Storefront** (`src/app/(store)`): home (full-bleed hero, value marquee, story, how-it-works, bundles with savings read from the catalogue, product grid, product video, room-by-room photography, comparison table, testimonials, trust band, FAQ, closing call to action), product pages with gallery, availability and Product/Offer JSON-LD, guest cart, checkout (US address, live shipping quotes, discount code, marketing consent, Stripe hosted checkout), success and cancel pages, order tracking, shipping/returns/privacy/terms/contact pages, `sitemap.xml`, `robots.txt`.
+- **Design system** (`src/app/globals.css`, `src/components/ui.ts`): warm editorial tokens (paper/ink/terracotta/sage), self-hosted fonts, and motion primitives (scroll-driven entrances, a CSS marquee, hover states) that all disable themselves under `prefers-reduced-motion`. Brand copy and imagery paths live in `src/content/site.ts`, stock photography in `public/images`.
 - **Back office** (`src/app/admin`): sign-in with TOTP, contribution dashboard (revenue, AOV, CAC, ROAS, COGS, shipping, fees, contribution per source/campaign/creative), orders (search by number, e-mail or tracking; timeline; fulfilment retry/hold/release/cancel; refunds; internal notes; attribution), products, bundles, discounts, suppliers and SKU mapping, ad spend, MFA enrollment.
 - **Attribution** (`src/proxy.ts`): UTM parameters, `fbclid`/`ttclid`/`gclid`, landing page and external referrer are captured on arrival and sent to the cart before checkout, where the API snapshots first touch and last non-direct click.
 - **Brand content** lives in `src/content/site.ts`; the components are brand-neutral.
@@ -18,6 +19,19 @@ npm run dev                    # http://localhost:3000, back office at /admin
 ```
 
 The API must be running. Without supplier or Stripe credentials, start it with `COMMERCE_SUPPLIER=FAKE`, seed `DemoCatalogSeeder`, and create an admin with `php artisan admin:create`. Point the API's `STRIPE_CHECKOUT_SUCCESS_URL` / `STRIPE_CHECKOUT_CANCEL_URL` at this app's `/checkout/success?session_id={CHECKOUT_SESSION_ID}` and `/checkout/cancelled`.
+
+### Designing without the API
+
+`tools/mock-api.mjs` is a development-only stand-in for Commerce Core: it serves the same catalogue, cart, shipping quote, checkout and tracking payloads from memory, so the storefront can be built and previewed without PHP, Stripe or a supplier.
+
+```bash
+npm run dev:mock    # http://localhost:4100
+COMMERCE_API_URL=http://localhost:4100 npm run dev
+```
+
+It always bounces checkout back to `/checkout/success` instead of Stripe. Nothing in `src/` imports it and it is not part of the Docker image.
+
+Fonts are self-hosted from `@fontsource-variable` through `next/font/local` (`src/app/fonts.ts`), so `npm run build` never needs to reach `fonts.googleapis.com` and browsers only ever load them from this origin (which is also what the CSP allows).
 
 ## Checks
 

@@ -1,5 +1,20 @@
 import { expect, test } from "@playwright/test";
 
+/** Relative luminance of a computed `rgb(...)` colour, per WCAG 2.x. */
+function luminance(colour: string): number {
+  const channels = (colour.match(/[\d.]+/g) ?? []).slice(0, 3).map(Number);
+  const [r, g, b] = channels.map((channel) => {
+    const value = channel / 255;
+    return value <= 0.03928 ? value / 12.92 : ((value + 0.055) / 1.055) ** 2.4;
+  });
+  return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+}
+
+function contrastRatio(foreground: string, background: string): number {
+  const [lighter, darker] = [luminance(foreground), luminance(background)].sort((a, b) => b - a);
+  return (lighter + 0.05) / (darker + 0.05);
+}
+
 test.describe("storefront on a phone", () => {
   test("home shows the offer, bundles and products without horizontal scrolling", async ({ page }) => {
     await page.setViewportSize({ width: 360, height: 780 });
@@ -59,8 +74,10 @@ test.describe("storefront on a phone", () => {
       return { text: style.color, background: style.backgroundColor };
     });
 
-    expect(colors.text).toBe("rgb(247, 245, 239)");
-    expect(colors.background).toBe("rgb(20, 33, 61)");
+    // The palette may change; what must not change is that the label stays legible on its own background
+    // instead of inheriting the body colour and vanishing into the button fill.
+    expect(colors.background).not.toBe("rgba(0, 0, 0, 0)");
+    expect(contrastRatio(colors.text, colors.background)).toBeGreaterThanOrEqual(4.5);
   });
 
   test("security headers are sent", async ({ request }) => {

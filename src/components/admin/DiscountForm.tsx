@@ -25,7 +25,7 @@ export function DiscountForm({ discount, products, bundles }: { discount: AdminD
         <Field label="Starts (UTC)" name="starts_at" type="datetime-local" defaultValue={localDateTime(discount?.starts_at ?? null)} />
         <Field label="Ends (UTC)" name="ends_at" type="datetime-local" defaultValue={localDateTime(discount?.ends_at ?? null)} />
       </div>
-      <fieldset className="grid gap-4 border-2 border-ink p-4 sm:grid-cols-2">
+      <fieldset className="grid gap-4 rounded-3xl border border-ink/10 bg-white p-5 shadow-soft sm:grid-cols-2">
         <legend className="px-2 font-black">Scope (leave empty for the whole cart)</legend>
         <Select label="Products" name="product_ids" multiple size={Math.min(6, Math.max(2, products.length))} defaultValue={(discount?.product_ids ?? []).map(String)}>
           {products.map((product) => <option key={product.id} value={product.id}>{product.name}</option>)}

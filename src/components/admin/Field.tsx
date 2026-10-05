@@ -31,17 +31,17 @@ export function Select({ label, children, ...props }: SelectHTMLAttributes<HTMLS
 
 export function StatusBadge({ status }: { status: string | null | undefined }) {
   const tone = status && ["PAID", "DELIVERED", "COMPLETED", "SUCCEEDED", "active", "SHIPPED"].includes(status)
-    ? "bg-mint"
+    ? "bg-mint text-forest"
     : status && ["FAILED", "CANCELLED", "DELIVERY_EXCEPTION", "REFUNDED", "HOLD", "archived"].includes(status)
-      ? "bg-coral"
-      : "bg-sand";
-  return <span className={`inline-block border-2 border-ink px-2 py-0.5 text-xs font-black ${tone}`}>{status ?? "—"}</span>;
+      ? "bg-terracotta/12 text-ember"
+      : "bg-linen text-ink/60";
+  return <span className={`inline-block rounded-full px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.08em] ${tone}`}>{status ?? "—"}</span>;
 }
 
 export function PageTitle({ title, children }: { title: string; children?: ReactNode }) {
   return (
-    <div className="mb-6 flex flex-wrap items-end justify-between gap-4 border-b-2 border-ink pb-4">
-      <h1 className="text-3xl font-black tracking-[-.05em]">{title}</h1>
+    <div className="mb-6 flex flex-wrap items-end justify-between gap-4 border-b border-ink/10 pb-4">
+      <h1 className="font-display text-3xl tracking-[-0.02em]">{title}</h1>
       {children}
     </div>
   );

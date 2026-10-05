@@ -66,7 +66,7 @@ export default async function DashboardPage({ searchParams }: PageProps<"/admin"
       <p className="mb-4 text-sm">{data.from} → {data.to} · attribution: {data.attribution_model.replaceAll("_", " ")}{totals.orders_with_unknown_cost > 0 && ` · ${totals.orders_with_unknown_cost} orders with unknown cost (contribution overstated)`}</p>
       <dl className="grid grid-cols-2 gap-3 sm:grid-cols-3 xl:grid-cols-6">
         {tiles.map(([label, value]) => (
-          <div key={label} className={`${ui.card} p-4 ${label === "Contribution" ? (totals.contribution_cents < 0 ? "bg-coral" : "bg-mint") : ""}`}>
+          <div key={label} className={`${ui.card} p-4 ${label === "Contribution" ? (totals.contribution_cents < 0 ? "bg-terracotta/10 text-ember" : "bg-mint") : ""}`}>
             <dt className="text-xs font-bold uppercase tracking-wider">{label}</dt>
             <dd className="mt-1 text-2xl font-black tabular-nums">{value}</dd>
           </div>
@@ -74,7 +74,7 @@ export default async function DashboardPage({ searchParams }: PageProps<"/admin"
       </dl>
 
       <h2 className="mb-3 mt-10 text-xl font-black">By source / campaign / creative</h2>
-      <div className="overflow-x-auto border-2 border-ink">
+      <div className="overflow-x-auto rounded-3xl border border-ink/10 bg-white shadow-soft">
         <table className="w-full min-w-[900px] text-sm">
           <thead className="bg-ink text-left text-paper">
             <tr>
@@ -83,7 +83,7 @@ export default async function DashboardPage({ searchParams }: PageProps<"/admin"
               ))}
             </tr>
           </thead>
-          <tbody className="divide-y divide-stone-300 tabular-nums">
+          <tbody className="divide-y divide-ink/8 tabular-nums">
             {data.by_campaign.map((row) => (
               <tr key={`${row.utm_source}-${row.utm_campaign}-${row.utm_content}`}>
                 <td className="px-3 py-2 font-bold">{row.utm_source}</td>
